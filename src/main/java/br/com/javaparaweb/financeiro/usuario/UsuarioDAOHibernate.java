@@ -2,7 +2,8 @@ package br.com.javaparaweb.financeiro.usuario;
 
 import java.util.List;
 
-import org.hibernate.Query;
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 
 public class UsuarioDAOHibernate implements UsuarioDAO {
@@ -41,9 +42,10 @@ public class UsuarioDAOHibernate implements UsuarioDAO {
 		Query consulta = this.session.createQuery(hql);
 		consulta.setParameter("login", login);
 
-		return (Usuario) consulta.uniqueResult();
+		return (Usuario) consulta.getResultList();
 	}
 
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public List<Usuario> listar() {
 		return this.session.createCriteria(Usuario.class).list();
