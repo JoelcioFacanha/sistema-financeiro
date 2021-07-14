@@ -2,12 +2,19 @@ package br.com.javaparaweb.financeiro.usuario;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.NaturalId;
 
@@ -27,6 +34,12 @@ public class Usuario implements Serializable {
 	private String celular;
 	private String idioma;
 	private boolean ativo;
+
+	@ElementCollection(targetClass = String.class)
+	@JoinTable(name = "usuario_permissao", uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "usuario", "permissao" }) }, joinColumns = @JoinColumn(name = "usuario"))
+	@Column(name = "permissao", length = 50)
+	private Set<String> permissao = new HashSet<String>();
 
 	public Usuario() {
 
@@ -117,9 +130,17 @@ public class Usuario implements Serializable {
 		this.ativo = ativo;
 	}
 
+	public Set<String> getPermissao() {
+		return permissao;
+	}
+
+	public void setPermissao(Set<String> premissao) {
+		this.permissao = premissao;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(celular, email, idioma, login, nascimento, nome);
+		return Objects.hash(ativo, celular, codigo, email, idioma, login, nascimento, nome, permissao, senha);
 	}
 
 	@Override
@@ -131,9 +152,11 @@ public class Usuario implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return Objects.equals(celular, other.celular) && Objects.equals(email, other.email)
-				&& Objects.equals(idioma, other.idioma) && Objects.equals(login, other.login)
-				&& Objects.equals(nascimento, other.nascimento) && Objects.equals(nome, other.nome);
+		return ativo == other.ativo && Objects.equals(celular, other.celular) && Objects.equals(codigo, other.codigo)
+				&& Objects.equals(email, other.email) && Objects.equals(idioma, other.idioma)
+				&& Objects.equals(login, other.login) && Objects.equals(nascimento, other.nascimento)
+				&& Objects.equals(nome, other.nome) && Objects.equals(permissao, other.permissao)
+				&& Objects.equals(senha, other.senha);
 	}
 
 }
